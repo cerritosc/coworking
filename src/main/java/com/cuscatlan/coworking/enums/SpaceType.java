@@ -1,5 +1,9 @@
 package com.cuscatlan.coworking.enums;
 
-public class SpaceType {
+public enum SpaceType {
+
+    MEETING_ROOM,
+    DESK,
+    PRIVATE_OFFICE
 
 }
