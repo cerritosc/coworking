@@ -47,7 +47,38 @@ public enum ErrorCode {
     INTERNAL_SERVER_ERROR(
             HttpStatus.INTERNAL_SERVER_ERROR,
             "Unexpected server error."
-    );
+    ),
+    
+    INVALID_RESERVATION_DATE(
+            HttpStatus.BAD_REQUEST,
+            "Invalid reservation dates."
+    ),
+
+    SPACE_INACTIVE(
+            HttpStatus.CONFLICT,
+            "Space is inactive."
+    ),
+
+    USER_DISABLED(
+            HttpStatus.FORBIDDEN,
+            "User account is disabled."
+    ),
+
+    INVALID_RESERVATION_DURATION(
+            HttpStatus.BAD_REQUEST,
+            "Invalid reservation duration."
+    ),
+
+	UNSUPPORTED_SPACE_TYPE(
+	        HttpStatus.INTERNAL_SERVER_ERROR,
+	        "No pricing strategy found for the selected space type."
+	),
+	
+	RESERVATION_CANNOT_BE_CANCELLED(
+	        HttpStatus.CONFLICT,
+	        "Reservation cannot be cancelled."
+	);
+	
 
     private final HttpStatus httpStatus;
     private final String defaultMessage;

@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import com.cuscatlan.coworking.dto.response.report.OccupationReportResponse;
 import com.cuscatlan.coworking.entity.Space;
 import com.cuscatlan.coworking.enums.SpaceType;
 
@@ -35,5 +36,27 @@ public interface SpaceRepository extends
     
     @EntityGraph(attributePaths = "reservations")
     Optional<Space> findWithReservationsById(Long id);
+    
+    @Query("""
+            SELECT new sv.cuscatlan.coworking.dto.response.report.OccupationReportResponse(
+                s.id,
+                s.name,
+                COALESCE(
+                    (
+                        COUNT(r) * 100.0 /
+                        CASE
+                            WHEN COUNT(r) = 0 THEN 1
+                            ELSE COUNT(r)
+                        END
+                    ),
+                    0
+                )
+            )
+            FROM Space s
+            LEFT JOIN s.reservations r
+            GROUP BY s.id, s.name
+            ORDER BY s.name
+            """)
+    List<OccupationReportResponse> getOccupationReport();
 
 }

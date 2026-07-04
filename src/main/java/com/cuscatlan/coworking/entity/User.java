@@ -1,6 +1,8 @@
 package com.cuscatlan.coworking.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,6 +13,8 @@ import java.util.List;
 
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table(
@@ -22,6 +26,7 @@ import java.util.List;
                 @UniqueConstraint(name = "uk_user_email", columnNames = "email")
         }
 )
+
 public class User extends BaseEntity {
 
     @Column(nullable = false, length = 100)

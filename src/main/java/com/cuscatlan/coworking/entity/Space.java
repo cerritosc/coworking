@@ -1,9 +1,13 @@
 package com.cuscatlan.coworking.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import com.cuscatlan.coworking.enums.Role;
 import com.cuscatlan.coworking.enums.SpaceType;
 
 import java.math.BigDecimal;
@@ -12,6 +16,8 @@ import java.util.List;
 
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table(
