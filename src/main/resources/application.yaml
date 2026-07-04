@@ -4,3 +4,21 @@ spring:
   
   profiles:
     active: dev
+    
+application:
+  name: Coworking API
+  
+jwt:
+  secret: my-secret-key-change-me
+  expiration: 3600000
+  
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    
+management:
+
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,circuitbreakers
