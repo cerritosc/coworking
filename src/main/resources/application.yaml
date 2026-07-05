@@ -9,7 +9,7 @@ application:
   name: Coworking API
   
 jwt:
-  secret: my-secret-key-change-me
+  secret: 3F91D0F8A44B1E6D4A3F97C9F4D88E12B8D5F5E3A9B0C1D2E3F4A5B6C7D8E9F0A1B2C3D4E5F60718293A4B5C6D7E8F90
   expiration: 3600000
   
 springdoc:

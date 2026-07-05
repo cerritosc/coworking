@@ -2,18 +2,21 @@ package com.cuscatlan.coworking.service.impl;
 
 import java.util.List;
 
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import com.cuscatlan.coworking.common.exception.SpaceNotFoundException;
 import com.cuscatlan.coworking.entity.Space;
+import com.cuscatlan.coworking.enums.SpaceType;
 import com.cuscatlan.coworking.dto.request.space.CreateSpaceRequest;
 import com.cuscatlan.coworking.dto.request.space.UpdateSpaceRequest;
 import com.cuscatlan.coworking.dto.response.space.SpaceResponse;
 import com.cuscatlan.coworking.mapper.SpaceMapper;
 import com.cuscatlan.coworking.repository.SpaceRepository;
 import com.cuscatlan.coworking.service.SpaceService;
+import com.cuscatlan.coworking.specification.SpaceSpecification;
 
 @Service
 @RequiredArgsConstructor
@@ -75,9 +78,17 @@ public class SpaceServiceImpl implements SpaceService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<SpaceResponse> findActive() {
+    public List<SpaceResponse> search(
+            Boolean active,
+            SpaceType type, Integer capacity) {
 
-        return spaceRepository.findByActiveTrue()
+        Specification<Space> specification =
+                Specification
+                        .where(SpaceSpecification.isActive(active))
+                        .and(SpaceSpecification.hasType(type)
+                        .and(SpaceSpecification.hasCapacity(capacity)));
+
+        return spaceRepository.findAll(specification)
                 .stream()
                 .map(spaceMapper::toResponse)
                 .toList();

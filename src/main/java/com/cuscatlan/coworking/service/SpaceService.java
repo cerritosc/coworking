@@ -5,6 +5,7 @@ import java.util.List;
 import com.cuscatlan.coworking.dto.request.space.CreateSpaceRequest;
 import com.cuscatlan.coworking.dto.request.space.UpdateSpaceRequest;
 import com.cuscatlan.coworking.dto.response.space.SpaceResponse;
+import com.cuscatlan.coworking.enums.SpaceType;
 
 public interface SpaceService {
 
@@ -16,6 +17,6 @@ public interface SpaceService {
 
     List<SpaceResponse> findAll();
 
-    List<SpaceResponse> findActive();
+    List<SpaceResponse> search(Boolean active, SpaceType type, Integer capacity);
 
 }

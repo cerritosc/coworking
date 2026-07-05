@@ -15,7 +15,7 @@ public class PaymentServiceImpl implements PaymentService {
 
         log.info(
                 "Validating payment for reservation {}, amount {} {}",
-                paymentRequest.getReservationId(),
+                paymentRequest.getSpaceId(),
                 paymentRequest.getAmount(),
                 paymentRequest.getCurrency()
         );

@@ -77,6 +77,11 @@ public enum ErrorCode {
 	RESERVATION_CANNOT_BE_CANCELLED(
 	        HttpStatus.CONFLICT,
 	        "Reservation cannot be cancelled."
+	),
+	
+	USER_ALREADY_EXISTS(
+	        HttpStatus.CONFLICT,
+	        "User already exists."
 	);
 	
 

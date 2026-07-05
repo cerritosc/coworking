@@ -38,25 +38,14 @@ public interface SpaceRepository extends
     Optional<Space> findWithReservationsById(Long id);
     
     @Query("""
-            SELECT new sv.cuscatlan.coworking.dto.response.report.OccupationReportResponse(
-                s.id,
-                s.name,
-                COALESCE(
-                    (
-                        COUNT(r) * 100.0 /
-                        CASE
-                            WHEN COUNT(r) = 0 THEN 1
-                            ELSE COUNT(r)
-                        END
-                    ),
-                    0
-                )
-            )
-            FROM Space s
-            LEFT JOIN s.reservations r
-            GROUP BY s.id, s.name
-            ORDER BY s.name
-            """)
-    List<OccupationReportResponse> getOccupationReport();
+    	    SELECT new com.cuscatlan.coworking.dto.response.report.OccupationReportResponse(
+    	        s.id,
+    	        s.name,
+    	        0.0
+    	    )
+    	    FROM Space s
+    	    ORDER BY s.name
+    	    """)
+    	List<OccupationReportResponse> getOccupationReport();
 
 }

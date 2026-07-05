@@ -18,12 +18,14 @@ import com.cuscatlan.coworking.enums.ReservationStatus;
 import com.cuscatlan.coworking.dto.request.payment.PaymentRequest;
 import com.cuscatlan.coworking.dto.request.reservation.CreateReservationRequest;
 import com.cuscatlan.coworking.dto.response.reservation.ReservationResponse;
+import com.cuscatlan.coworking.mapper.PaymentMapper;
 import com.cuscatlan.coworking.mapper.ReservationMapper;
 import com.cuscatlan.coworking.repository.ReservationRepository;
 import com.cuscatlan.coworking.repository.SpaceRepository;
 import com.cuscatlan.coworking.service.PaymentService;
 import com.cuscatlan.coworking.service.ReservationService;
-import com.cuscatlan.coworking.service.auth.AuthenticationService;
+import com.cuscatlan.coworking.service.auth.AuthenticationFacade;
+import com.cuscatlan.coworking.service.pricing.PricingStrategy;
 import com.cuscatlan.coworking.service.pricing.PricingStrategyFactory;
 import com.cuscatlan.coworking.service.reservation.ReservationValidator;
 
@@ -33,23 +35,23 @@ import com.cuscatlan.coworking.service.reservation.ReservationValidator;
 public class ReservationServiceImpl implements ReservationService {
 
     private final ReservationRepository reservationRepository;
-
     private final SpaceRepository spaceRepository;
 
-    private final AuthenticationService authenticationService;
-
-    private final PricingStrategyFactory pricingStrategyFactory;
+    private final ReservationMapper reservationMapper;
+    private final PaymentMapper paymentMapper;
 
     private final ReservationValidator reservationValidator;
 
-    private final ReservationMapper reservationMapper;
+    private final PricingStrategyFactory pricingStrategyFactory;
 
     private final PaymentService paymentService;
+
+    private final AuthenticationFacade authenticationFacade;
 
     @Override
     public ReservationResponse create(CreateReservationRequest request) {
 
-        User user = authenticationService.getCurrentUser();
+        User currentUser = authenticationFacade.getCurrentUser();
 
         Space space = spaceRepository
                 .findByIdForUpdate(request.getSpaceId())
@@ -57,31 +59,31 @@ public class ReservationServiceImpl implements ReservationService {
                         new SpaceNotFoundException(request.getSpaceId()));
 
         reservationValidator.validateCreation(
-                user,
+                currentUser,
                 space,
                 request);
 
-        BigDecimal totalPrice =
-                pricingStrategyFactory
-                        .getStrategy(space.getType())
-                        .calculatePrice(
-                                space,
-                                request.getStartDateTime(),
-                                request.getEndDateTime());
+        PricingStrategy strategy =
+                pricingStrategyFactory.getStrategy(space.getType());
 
-        PaymentRequest paymentRequest = PaymentRequest.builder()
-                .userId(user.getId())
-                .spaceId(space.getId())
-                .amount(totalPrice)
-                .currency("USD")
-                .build();
+        BigDecimal totalPrice =
+                strategy.calculatePrice(
+                        space,
+                        request.getStartDateTime(),
+                        request.getEndDateTime());
+
+        PaymentRequest paymentRequest =
+                paymentMapper.toPaymentRequest(
+                        currentUser,
+                        space,
+                        totalPrice);
 
         if (!paymentService.validatePayment(paymentRequest)) {
             throw new PaymentValidationException();
         }
 
         Reservation reservation = Reservation.builder()
-                .user(user)
+                .user(currentUser)
                 .space(space)
                 .startDateTime(request.getStartDateTime())
                 .endDateTime(request.getEndDateTime())
@@ -123,7 +125,7 @@ public class ReservationServiceImpl implements ReservationService {
     @Transactional(readOnly = true)
     public List<ReservationResponse> findByCurrentUser() {
 
-        User currentUser = authenticationService.getCurrentUser();
+        User currentUser = authenticationFacade.getCurrentUser();
 
         return reservationRepository
                 .findByUserId(currentUser.getId())
@@ -142,12 +144,10 @@ public class ReservationServiceImpl implements ReservationService {
                         new ReservationNotFoundException(reservationId));
 
         if (!reservation.getStatus().canBeCancelled()) {
-            throw new ReservationCannotBeCancelledException(reservation.getId());
+            throw new ReservationCannotBeCancelledException(reservationId);
         }
 
         reservation.setStatus(ReservationStatus.CANCELLED);
-
-        reservationRepository.save(reservation);
 
     }
 

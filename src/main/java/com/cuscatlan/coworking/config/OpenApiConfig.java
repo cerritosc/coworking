@@ -3,26 +3,62 @@ package com.cuscatlan.coworking.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.info.License;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 
 @Configuration
 public class OpenApiConfig {
 
+    private static final String SECURITY_SCHEME = "bearerAuth";
+
     @Bean
-    OpenAPI openAPI() {
+    public OpenAPI openAPI() {
 
         return new OpenAPI()
 
-                .info(
+                .info(new Info()
 
-                        new Info()
+                        .title("Coworking Reservation API")
 
-                                .title("Coworking API")
+                        .description("REST API for Coworking Reservation Management")
 
-                                .version("1.0.0")
+                        .version("1.0.0")
 
-                                .description("Backend Challenge")
+                        .contact(new Contact()
+                                .name("Cuscatlán")
+                                .email("support@cuscatlan.com"))
+
+                        .license(new License()
+                                .name("Apache 2.0")))
+
+                .addSecurityItem(
+                        new SecurityRequirement()
+                                .addList(SECURITY_SCHEME))
+
+                .components(
+
+                        new Components()
+
+                                .addSecuritySchemes(
+
+                                        SECURITY_SCHEME,
+
+                                        new SecurityScheme()
+
+                                                .name(SECURITY_SCHEME)
+
+                                                .type(SecurityScheme.Type.HTTP)
+
+                                                .scheme("bearer")
+
+                                                .bearerFormat("JWT")
+
+                                )
 
                 );
 
