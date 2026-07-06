@@ -94,7 +94,7 @@
             "url": "{{baseUrl}}/api/v1/spaces",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Meeting Room A\",\n  \"description\": \"Main meeting room\",\n  \"type\": \"MEETING_ROOM\",\n  \"capacity\": 10,\n  \"pricePerHour\": 25.00,\n  \"active\": true\n}"
+              "raw": "{\n  \"name\": \"Meeting Room A\",\n  \"description\": \"Main meeting room\",\n  \"type\": \"MEETING_ROOM\", \n  \"location\": \"Torre 1 nivel 1\",\n  \"capacity\": 10,\n  \"pricePerHour\": 25.00,\n  \"active\": true\n}"
             }
           }
         },
@@ -144,7 +144,7 @@
             "url": "{{baseUrl}}/api/v1/spaces/1",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Meeting Room A Updated\",\n  \"description\": \"Updated room\",\n  \"type\": \"MEETING_ROOM\",\n  \"capacity\": 12,\n  \"pricePerHour\": 30.00,\n  \"active\": true\n}"
+              "raw": "{\n  \"name\": \"Meeting Room A Updated\",\n  \"description\": \"Updated room\",\n  \"type\": \"MEETING_ROOM\",\n  \"location\": \"Torre 1 nivel 1\",\n  \"capacity\": 12,\n  \"pricePerHour\": 30.00,\n  \"active\": true\n}"
             }
           }
         }
