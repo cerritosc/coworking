@@ -68,7 +68,14 @@ public class SecurityConfig {
 
                     // Actuator
 
-                    .requestMatchers("/actuator/health")
+                    .requestMatchers(
+                            "/actuator",
+                            "/actuator/health",
+                            "/actuator/info",
+                            "/actuator/metrics",
+                            "/actuator/metrics/**",
+                            "/actuator/circuitbreakers",
+                            "/actuator/circuitbreakers/**")
                     .permitAll()
 
                     // Everything else
