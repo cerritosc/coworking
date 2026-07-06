@@ -24,6 +24,29 @@ services:
       timeout: 5s
       retries: 5
 
+  # 👇 ESTE ES EL NUEVO SERVICIO
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    container_name: coworking-api
+
+    restart: unless-stopped
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      DB_URL: jdbc:postgresql://postgres:5432/coworking_db
+      DB_USERNAME: coworking_user
+      DB_PASSWORD: coworking_password
+
+    ports:
+      - "8080:8080"
+
   pgadmin:
     image: dpage/pgadmin4:latest
     container_name: coworking-pgadmin
