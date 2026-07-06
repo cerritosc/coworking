@@ -12,7 +12,6 @@ import com.cuscatlan.coworking.common.exception.InvalidReservationDateException;
 import com.cuscatlan.coworking.common.exception.InvalidReservationDurationException;
 import com.cuscatlan.coworking.common.exception.OverlappingReservationException;
 import com.cuscatlan.coworking.common.exception.SpaceInactiveException;
-import com.cuscatlan.coworking.common.exception.SpaceNotFoundException;
 import com.cuscatlan.coworking.common.exception.UserDisabledException;
 import com.cuscatlan.coworking.entity.Space;
 import com.cuscatlan.coworking.entity.User;
@@ -72,10 +71,6 @@ public class ReservationValidator {
     private void validateDates(
             LocalDateTime start,
             LocalDateTime end) {
-    	
-    	Objects.requireNonNull(start, "Start date is required.");
-
-    	Objects.requireNonNull(end, "End date is required.");
 
         if (start == null || end == null) {
             throw new InvalidReservationDateException(

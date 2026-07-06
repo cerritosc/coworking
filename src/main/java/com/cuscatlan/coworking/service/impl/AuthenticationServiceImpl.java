@@ -2,6 +2,7 @@ package com.cuscatlan.coworking.service.impl;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -49,7 +50,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         User user = userRepository
                 .findByEmail(request.email())
-                .orElseThrow();
+                .orElseThrow(() ->
+                new UsernameNotFoundException(
+                        "User not found: " + request.email()));
 
         CustomUserDetails userDetails =
                 new CustomUserDetails(user);
