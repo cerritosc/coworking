@@ -22,6 +22,7 @@ import com.cuscatlan.coworking.mapper.PaymentMapper;
 import com.cuscatlan.coworking.mapper.ReservationMapper;
 import com.cuscatlan.coworking.repository.ReservationRepository;
 import com.cuscatlan.coworking.repository.SpaceRepository;
+import com.cuscatlan.coworking.service.EmailNotificationService;
 import com.cuscatlan.coworking.service.PaymentService;
 import com.cuscatlan.coworking.service.ReservationService;
 import com.cuscatlan.coworking.service.auth.AuthenticationFacade;
@@ -47,6 +48,8 @@ public class ReservationServiceImpl implements ReservationService {
     private final PaymentService paymentService;
 
     private final AuthenticationFacade authenticationFacade;
+    
+    private final EmailNotificationService emailNotificationService;
 
     @Override
     public ReservationResponse create(CreateReservationRequest request) {
@@ -92,6 +95,10 @@ public class ReservationServiceImpl implements ReservationService {
                 .build();
 
         reservationRepository.save(reservation);
+        
+        emailNotificationService
+        .sendReservationConfirmation(
+                reservation);
 
         return reservationMapper.toResponse(reservation);
 

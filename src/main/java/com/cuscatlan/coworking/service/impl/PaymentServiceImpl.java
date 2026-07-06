@@ -2,28 +2,38 @@ package com.cuscatlan.coworking.service.impl;
 
 import org.springframework.stereotype.Service;
 
-import lombok.extern.slf4j.Slf4j;
 import com.cuscatlan.coworking.dto.request.payment.PaymentRequest;
+import com.cuscatlan.coworking.integration.payment.ExternalPaymentClient;
 import com.cuscatlan.coworking.service.PaymentService;
 
-@Slf4j
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class PaymentServiceImpl implements PaymentService {
 
+    private final ExternalPaymentClient externalPaymentClient;
+
     @Override
-    public boolean validatePayment(PaymentRequest paymentRequest) {
+    @CircuitBreaker(
+            name = "payment-service",
+            fallbackMethod = "paymentFallback")
+    public boolean validatePayment(PaymentRequest request) {
 
-        log.info(
-                "Validating payment for reservation {}, amount {} {}",
-                paymentRequest.getSpaceId(),
-                paymentRequest.getAmount(),
-                paymentRequest.getCurrency()
-        );
+        return externalPaymentClient.validate(request);
 
-        /*
-         * Simulación del proveedor de pagos.
-         */
-        return true;
+    }
+
+    public boolean paymentFallback(
+            PaymentRequest request,
+            Exception ex) {
+
+        System.out.println(
+                ">>> Circuit Breaker activated: "
+                        + ex.getClass().getSimpleName());
+
+        return false;
 
     }
 

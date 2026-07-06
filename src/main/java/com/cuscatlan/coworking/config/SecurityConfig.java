@@ -72,6 +72,11 @@ public class SecurityConfig {
                     .permitAll()
 
                     // Everything else
+                    
+                    .requestMatchers(
+                            HttpMethod.POST,
+                            "/mock/payment/**")
+                    .permitAll()
 
                     .anyRequest()
                     .authenticated());
