@@ -15,6 +15,7 @@ import com.cuscatlan.coworking.entity.Reservation;
 import com.cuscatlan.coworking.entity.Space;
 import com.cuscatlan.coworking.entity.User;
 import com.cuscatlan.coworking.enums.ReservationStatus;
+import com.cuscatlan.coworking.enums.Role;
 import com.cuscatlan.coworking.dto.request.payment.PaymentRequest;
 import com.cuscatlan.coworking.dto.request.reservation.CreateReservationRequest;
 import com.cuscatlan.coworking.dto.response.reservation.ReservationResponse;
@@ -29,6 +30,7 @@ import com.cuscatlan.coworking.service.auth.AuthenticationFacade;
 import com.cuscatlan.coworking.service.pricing.PricingStrategy;
 import com.cuscatlan.coworking.service.pricing.PricingStrategyFactory;
 import com.cuscatlan.coworking.service.reservation.ReservationValidator;
+import org.springframework.security.access.AccessDeniedException;
 
 @Service
 @RequiredArgsConstructor
@@ -107,12 +109,20 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     @Transactional(readOnly = true)
     public ReservationResponse findById(Long id) {
+    	User currentUser = authenticationFacade.getCurrentUser();
 
-        Reservation reservation = reservationRepository
-                .findDetailedById(id)
-                .orElseThrow(() ->
-                        new ReservationNotFoundException(id));
+    	Reservation reservation = reservationRepository
+    	        .findDetailedById(id)
+    	        .orElseThrow(() ->
+    	                new ReservationNotFoundException(id));
+    	
+    	if (currentUser.getRole() != Role.ADMIN &&
+    	        !reservation.getUser().getId().equals(currentUser.getId())) {
 
+    	    throw new AccessDeniedException(
+    	            "You are not allowed to access this reservation.");
+    	}
+        
         return reservationMapper.toResponse(reservation);
 
     }
@@ -144,11 +154,19 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     public void cancel(Long reservationId) {
+    	User currentUser = authenticationFacade.getCurrentUser();
 
         Reservation reservation = reservationRepository
                 .findById(reservationId)
                 .orElseThrow(() ->
                         new ReservationNotFoundException(reservationId));
+    	
+    	if (currentUser.getRole() != Role.ADMIN &&
+    	        !reservation.getUser().getId().equals(currentUser.getId())) {
+
+    	    throw new AccessDeniedException(
+    	            "You are not allowed to access this reservation.");
+    	}
 
         if (!reservation.getStatus().canBeCancelled()) {
             throw new ReservationCannotBeCancelledException(reservationId);

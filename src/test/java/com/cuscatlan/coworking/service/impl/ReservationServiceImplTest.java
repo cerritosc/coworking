@@ -19,9 +19,11 @@ import org.mockito.InjectMocks;
 import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.test.context.support.WithMockUser;
 
 import com.cuscatlan.coworking.common.exception.PaymentValidationException;
 import com.cuscatlan.coworking.common.exception.ReservationCannotBeCancelledException;
+import com.cuscatlan.coworking.common.util.ApiPaths;
 import com.cuscatlan.coworking.dto.request.payment.PaymentRequest;
 import com.cuscatlan.coworking.dto.request.reservation.CreateReservationRequest;
 import com.cuscatlan.coworking.dto.response.reservation.ReservationResponse;
@@ -29,6 +31,7 @@ import com.cuscatlan.coworking.entity.Reservation;
 import com.cuscatlan.coworking.entity.Space;
 import com.cuscatlan.coworking.entity.User;
 import com.cuscatlan.coworking.enums.ReservationStatus;
+import com.cuscatlan.coworking.enums.Role;
 import com.cuscatlan.coworking.mapper.PaymentMapper;
 import com.cuscatlan.coworking.mapper.ReservationMapper;
 import com.cuscatlan.coworking.repository.ReservationRepository;
@@ -40,6 +43,7 @@ import com.cuscatlan.coworking.service.pricing.PricingStrategy;
 import com.cuscatlan.coworking.service.pricing.PricingStrategyFactory;
 import com.cuscatlan.coworking.service.reservation.ReservationValidator;
 import com.cuscatlan.coworking.support.TestDataFactory;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 @ExtendWith(MockitoExtension.class)
 class ReservationServiceImplTest {
@@ -249,6 +253,10 @@ class ReservationServiceImplTest {
     @Test
     @DisplayName("Should find reservation by id")
     void shouldFindReservationById() {
+    	User currentUser = User.builder()
+    	        .id(1L)
+    	        .role(Role.USER)
+    	        .build();
 
         Reservation reservation = Reservation.builder()
                 .id(1L)
@@ -256,6 +264,9 @@ class ReservationServiceImplTest {
                 .space(space)
                 .status(ReservationStatus.CONFIRMED)
                 .build();
+        
+        when(authenticationFacade.getCurrentUser())
+        		.thenReturn(currentUser);
 
         when(reservationRepository.findDetailedById(1L))
                 .thenReturn(Optional.of(reservation));
@@ -353,12 +364,20 @@ class ReservationServiceImplTest {
     @Test
     @DisplayName("Should cancel reservation successfully")
     void shouldCancelReservationSuccessfully() {
+    	User currentUser = User.builder()
+    	        .id(1L)
+    	        .role(Role.USER)
+    	        .build();
 
         Reservation reservation = Reservation.builder()
                 .id(1L)
+                .user(currentUser)
                 .status(ReservationStatus.CONFIRMED)
                 .build();
 
+        when(authenticationFacade.getCurrentUser())
+        		.thenReturn(currentUser);
+        
         when(reservationRepository.findById(1L))
                 .thenReturn(Optional.of(reservation));
 
@@ -376,12 +395,20 @@ class ReservationServiceImplTest {
     @Test
     @DisplayName("Should throw exception when reservation cannot be cancelled")
     void shouldThrowWhenReservationCannotBeCancelled() {
+    	User currentUser = User.builder()
+    	        .id(1L)
+    	        .role(Role.USER)
+    	        .build();
 
         Reservation reservation = Reservation.builder()
                 .id(1L)
+                .user(currentUser)
                 .status(ReservationStatus.COMPLETED)
                 .build();
 
+        when(authenticationFacade.getCurrentUser())
+        		.thenReturn(currentUser);
+        
         when(reservationRepository.findById(1L))
                 .thenReturn(Optional.of(reservation));
 

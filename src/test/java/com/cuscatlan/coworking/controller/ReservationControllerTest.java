@@ -21,7 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.cuscatlan.coworking.common.util.ApiPaths;
@@ -30,6 +30,7 @@ import com.cuscatlan.coworking.dto.response.reservation.ReservationResponse;
 import com.cuscatlan.coworking.enums.ReservationStatus;
 import com.cuscatlan.coworking.service.ReservationService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import static org.mockito.Mockito.verifyNoInteractions;
 
 @SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
@@ -126,6 +127,7 @@ class ReservationControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = "ADMIN")
     @DisplayName("Should return all reservations")
     void shouldReturnAllReservations() throws Exception {
 
@@ -202,6 +204,18 @@ class ReservationControllerTest {
 
                 .andExpect(jsonPath("$.message")
                         .value("Reservation cancelled successfully."));
+
+    }
+    
+    @Test
+    @WithMockUser(roles = "USER")
+    @DisplayName("Should return 403 when USER tries to retrieve all reservations")
+    void shouldReturnForbiddenWhenUserRetrievesAllReservations() throws Exception {
+
+        mockMvc.perform(get(ApiPaths.RESERVATIONS))
+                .andExpect(status().isForbidden());
+
+        verifyNoInteractions(reservationService);
 
     }
 

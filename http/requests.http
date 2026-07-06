@@ -1,0 +1,158 @@
+### ============================================
+### VARIABLES
+### ============================================
+
+@host = http://localhost:8080
+@token = REPLACE_WITH_JWT
+
+### ============================================
+### REGISTER
+### ============================================
+
+POST {{host}}/api/v1/auth/register
+Content-Type: application/json
+
+{
+  "firstName": "Carlos",
+  "lastName": "Cerritos",
+  "email": "carlos@test.com",
+  "password": "Password123"
+}
+
+###
+
+### ============================================
+### LOGIN
+### ============================================
+
+POST {{host}}/api/v1/auth/login
+Content-Type: application/json
+
+{
+  "email": "carlos@test.com",
+  "password": "Password123"
+}
+
+###
+
+### ============================================
+### CREATE SPACE
+### ============================================
+
+POST {{host}}/api/v1/spaces
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Meeting Room A",
+  "description": "Main meeting room",
+  "type": "MEETING_ROOM",
+  "capacity": 10,
+  "pricePerHour": 25.00,
+  "active": true
+}
+
+###
+
+### ============================================
+### SEARCH SPACES
+### ============================================
+
+GET {{host}}/api/v1/spaces
+Authorization: Bearer {{token}}
+
+###
+
+### ============================================
+### FIND SPACE
+### ============================================
+
+GET {{host}}/api/v1/spaces/1
+Authorization: Bearer {{token}}
+
+###
+
+### ============================================
+### UPDATE SPACE
+### ============================================
+
+PUT {{host}}/api/v1/spaces/1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Meeting Room A Updated",
+  "description": "Updated description",
+  "type": "MEETING_ROOM",
+  "capacity": 12,
+  "pricePerHour": 30.00,
+  "active": true
+}
+
+###
+
+### ============================================
+### CREATE RESERVATION
+### ============================================
+
+POST {{host}}/api/v1/reservations
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "spaceId": 1,
+  "startDateTime": "2026-07-15T09:00:00",
+  "endDateTime": "2026-07-15T11:00:00"
+}
+
+###
+
+### ============================================
+### MY RESERVATIONS
+### ============================================
+
+GET {{host}}/api/v1/reservations/me
+Authorization: Bearer {{token}}
+
+###
+
+### ============================================
+### FIND RESERVATION
+### ============================================
+
+GET {{host}}/api/v1/reservations/1
+Authorization: Bearer {{token}}
+
+###
+
+### ============================================
+### CANCEL RESERVATION
+### ============================================
+
+PATCH {{host}}/api/v1/reservations/1/cancel
+Authorization: Bearer {{token}}
+
+###
+
+### ============================================
+### OCCUPATION REPORT
+### ============================================
+
+GET {{host}}/api/v1/reports/occupation?startDate=2026-07-01T00:00:00&endDate=2026-07-31T23:59:59
+Authorization: Bearer {{token}}
+
+###
+
+### ============================================
+### ACTUATOR HEALTH
+### ============================================
+
+GET {{host}}/actuator/health
+
+###
+
+### ============================================
+### ACTUATOR CIRCUIT BREAKER
+### ============================================
+
+GET {{host}}/actuator/circuitbreakers
