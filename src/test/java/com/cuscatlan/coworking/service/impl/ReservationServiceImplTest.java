@@ -33,6 +33,7 @@ import com.cuscatlan.coworking.mapper.PaymentMapper;
 import com.cuscatlan.coworking.mapper.ReservationMapper;
 import com.cuscatlan.coworking.repository.ReservationRepository;
 import com.cuscatlan.coworking.repository.SpaceRepository;
+import com.cuscatlan.coworking.service.EmailNotificationService;
 import com.cuscatlan.coworking.service.PaymentService;
 import com.cuscatlan.coworking.service.auth.AuthenticationFacade;
 import com.cuscatlan.coworking.service.pricing.PricingStrategy;
@@ -69,6 +70,9 @@ class ReservationServiceImplTest {
 
     @Mock
     private AuthenticationFacade authenticationFacade;
+    
+    @Mock
+    private EmailNotificationService emailNotificationService;
 
     @InjectMocks
     private ReservationServiceImpl service;
@@ -199,6 +203,9 @@ class ReservationServiceImplTest {
 
         inOrder.verify(reservationRepository)
                 .save(any());
+        
+        verify(emailNotificationService)
+        .sendReservationConfirmation(any(Reservation.class));
 
     }
     

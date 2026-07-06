@@ -1,5 +1,6 @@
 package com.cuscatlan.coworking.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -10,6 +11,7 @@ import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import com.cuscatlan.coworking.dto.response.report.OccupationReportProjection;
 import com.cuscatlan.coworking.dto.response.report.OccupationReportResponse;
 import com.cuscatlan.coworking.entity.Space;
 import com.cuscatlan.coworking.enums.SpaceType;
@@ -36,16 +38,5 @@ public interface SpaceRepository extends
     
     @EntityGraph(attributePaths = "reservations")
     Optional<Space> findWithReservationsById(Long id);
-    
-    @Query("""
-    	    SELECT new com.cuscatlan.coworking.dto.response.report.OccupationReportResponse(
-    	        s.id,
-    	        s.name,
-    	        0.0
-    	    )
-    	    FROM Space s
-    	    ORDER BY s.name
-    	    """)
-    	List<OccupationReportResponse> getOccupationReport();
 
 }

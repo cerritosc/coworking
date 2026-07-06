@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -100,6 +101,24 @@ public class GlobalExceptionHandler {
                 fieldError.getRejectedValue(),
                 fieldError.getDefaultMessage()
         );
+
+    }
+    
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ResponseEntity<ErrorResponse> handleMissingRequestParameter(
+            MissingServletRequestParameterException ex) {
+
+        ErrorResponse response = new ErrorResponse(
+                false,
+                ErrorCode.VALIDATION_ERROR,
+                ex.getMessage(),
+                LocalDateTime.now(),
+                List.of()
+        );
+
+        return ResponseEntity
+                .badRequest()
+                .body(response);
 
     }
 

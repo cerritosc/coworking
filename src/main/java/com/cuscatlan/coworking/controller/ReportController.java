@@ -1,10 +1,13 @@
 package com.cuscatlan.coworking.controller;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -28,10 +31,12 @@ public class ReportController {
 
     @GetMapping("/occupation")
     @Operation(summary = "Get occupation report")
-    public ResponseEntity<ApiResponse<List<OccupationReportResponse>>> getOccupationReport() {
+    public ResponseEntity<ApiResponse<List<OccupationReportResponse>>> getOccupationReport(
+    					@RequestParam LocalDateTime startDate,
+    					@RequestParam LocalDateTime endDate) {
 
         List<OccupationReportResponse> response =
-                reportService.getOccupationReport();
+                reportService.getOccupationReport(startDate, endDate);
 
         return ResponseEntity.ok(
                 ApiResponse.success(

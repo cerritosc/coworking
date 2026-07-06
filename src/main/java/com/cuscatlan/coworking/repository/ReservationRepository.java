@@ -44,5 +44,18 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             @Param("startDate") LocalDateTime startDate,
             @Param("endDate") LocalDateTime endDate
     );
+    
+    @Query("""
+    	    SELECT r
+    	    FROM Reservation r
+    	    JOIN FETCH r.space
+    	    WHERE r.status = com.cuscatlan.coworking.enums.ReservationStatus.CONFIRMED
+    	      AND r.startDateTime >= :startDate
+    	      AND r.endDateTime <= :endDate
+    	    ORDER BY r.space.id
+    	    """)
+    	List<Reservation> findReservationsForReport(
+    	        @Param("startDate") LocalDateTime startDate,
+    	        @Param("endDate") LocalDateTime endDate);
 
 }
